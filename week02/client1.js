@@ -1,50 +1,4 @@
-### 有限状态机
-
-1. 每一个状态都是一个机器
-   - 每一个机器里，我们都可以做计算，存储，输出
-   - 所有的这些机器的接受的输入是一致的
-   - 状态机的每一个机器本身没有状态，如果我们用函数来表示的话，他应该是纯函数（无副作用）
-2. 每一个机器知道下一个的状态
-   - 每个机器都有确定的下一个状态（Moore）
-   - 每个机器根据输入决定下一个状态（Mealy）
-
-
-
-Js中的有限状态机（Mealy）
-
-  ```javascript
-//每一个函数是一个状态
-function state(input){ //函数参数就是输入
-  //在函数中，可以自由的编写代码，处理每个状态的逻辑
-  return next; //返回值作为下一个状态
-}
-
-//调用
-while(input){
-  state = state(input); //把状态机的返回值作为下一个状态
-}
-  ```
-
-
-
-### http请求：
-
-1. ISO-OSI 七层网络模型
-   物理层 数据链路层  网络层 传输层 会话层 表示层 应用层
- 
-
-2. http请求总结
-
-   content-type是一个必要的字段，需要有默认的值
-
-   body是KV形式
-
-   不同的content-type影响body的格式
-
-   
-
-3. ```javascript
-   const net = require('net');
+const net = require('net');
    class Request{
        constructor(options){
            this.method = options.method ||'GET',
@@ -199,97 +153,89 @@ while(input){
          }
        }
    }
-   
-   
+
+
    class ResponseParser{
-       constructor(){
-           this.WAITING_STATUS_LINE = 0;
-           this.WAITING_STATUS_LINE_END = 1;
-           this.WAITING_HEADER_NAME = 2;
-           this.WAITING_HEADER_SPACE = 3;
-           this.WAITING_HEADER_VALUE = 4;
-           this.WAITING_HEADER_LINE_END = 5;
-           this.WAITING_HEADER_BLOCk_END = 6;
-           this.WAITING_BODY = 7;
-   
-           this.current = this.WAITING_STATUS_LINE;
-           this.statusLine = '';
-           this.headers = {};
-           this.headerName = '';
-           this.headerValue = '';
-           this.bodyParser = null;
-       }
-       get isFinished(){
-           return this.bodyParser&&this.bodyParser.isFinished;
-       }
-       get response(){
-           this.statusLine.match(/HTTP\/1.1 ([0-9]+) ([\s\S]+)/);
-           return {
-               statusCode:RegExp.$1,
-               statusTxt:RegExp.$2,
-               headers:this.headers,
-               body:this.bodyParser.content.join(' ')
-           }
-       }
-       receive(string){
-           for(let i =0;i<string.length;i++){
-               this.receiveChar(string.CharAt(i))
-           }
-       }
-       receiveChar(char){
-         if(this.current===this.WAITING_STATUS_LINE){
-             if(char==='\r'){
-                 this.current = this.WAITING_STATUS_LINE_END;
-             }else{
-                 this.statusLine +char;
-             }
-         }else if(this.current===this.WAITING_STATUS_LINE_END){
-           if(char==='\n'){
-               this.current = this.WAITING_HEADER_NAME;
-           }
-         }else if(this.current===this.WAITING_HEADER_NAME){
-           if(char===':'){
-               this.current = this.WAITING_HEADER_SPACE;
-           }else if(char==='\r'){
-               this.current = this.WAITING_HEADER_BLOCk_END;
-               if(this.headers['Transfer-Encoding']==='chunked'){
-                   this.bodyParser = new TrunkedBodyParser();
-               }
-           }else{
-               this.headerName += char;
-           }
-         }else if(this.current===this.WAITING_STATUS_SPACE){
-           if(char===' '){
-               this.current = this.WAITING_HEADER_VALUE;
-           }
-         }else if(this.current===this.WAITING_STATUS_VALUE){
-           if(char==='\r'){
-               this.current = this.WAITING_HEADER_LINE_END;
-               this.headers[this.headerName] = this.headerValue;
-               this.headerName ='';
-               this.headerValue ='';
-           }else{
-               this.headerValue +=char;
-           }
-   
-         }else if(this.current===this.WAITING_HEADER_LINE_END){
-           if(char==='\n'){
-               this.current = this.WAITING_HEADER_NAME;
-           }
-         }else if(this.current===this.WAITING_HEADER_BLOCk_END){
-           if(char==='\n'){
-               this.current = this.WAITING_BODY;
-           }
-         }else if(this.current === this.WAITING_BODY){
-             this.bodyParser.receiveChar(char);
-         }
-       }
-   }
-   ```
+    constructor(){
+        this.WAITING_STATUS_LINE = 0;
+        this.WAITING_STATUS_LINE_END = 1;
+        this.WAITING_HEADER_NAME = 2;
+        this.WAITING_HEADER_SPACE = 3;
+        this.WAITING_HEADER_VALUE = 4;
+        this.WAITING_HEADER_LINE_END = 5;
+        this.WAITING_HEADER_BLOCk_END = 6;
+        this.WAITING_BODY = 7;
 
+        this.current = this.WAITING_STATUS_LINE;
+        this.statusLine = '';
+        this.headers = {};
+        this.headerName = '';
+        this.headerValue = '';
+        this.bodyParser = null;
+    }
+    get isFinished(){
+        return this.bodyParser&&this.bodyParser.isFinished;
+    }
+    get response(){
+        this.statusLine.match(/HTTP\/1.1 ([0-9]+) ([\s\S]+)/);
+        return {
+            statusCode:RegExp.$1,
+            statusTxt:RegExp.$2,
+            headers:this.headers,
+            body:this.bodyParser.content.join(' ')
+        }
+    }
+    receive(string){
+        for(let i =0;i<string.length;i++){
+            this.receiveChar(string.CharAt(i))
+        }
+    }
+    receiveChar(char){
+      if(this.current===this.WAITING_STATUS_LINE){
+          if(char==='\r'){
+              this.current = this.WAITING_STATUS_LINE_END;
+          }else{
+              this.statusLine +char;
+          }
+      }else if(this.current===this.WAITING_STATUS_LINE_END){
+        if(char==='\n'){
+            this.current = this.WAITING_HEADER_NAME;
+        }
+      }else if(this.current===this.WAITING_HEADER_NAME){
+        if(char===':'){
+            this.current = this.WAITING_HEADER_SPACE;
+        }else if(char==='\r'){
+            this.current = this.WAITING_HEADER_BLOCk_END;
+            if(this.headers['Transfer-Encoding']==='chunked'){
+                this.bodyParser = new TrunkedBodyParser();
+            }
+        }else{
+            this.headerName += char;
+        }
+      }else if(this.current===this.WAITING_STATUS_SPACE){
+        if(char===' '){
+            this.current = this.WAITING_HEADER_VALUE;
+        }
+      }else if(this.current===this.WAITING_STATUS_VALUE){
+        if(char==='\r'){
+            this.current = this.WAITING_HEADER_LINE_END;
+            this.headers[this.headerName] = this.headerValue;
+            this.headerName ='';
+            this.headerValue ='';
+        }else{
+            this.headerValue +=char;
+        }
 
-
-本周学习总结：
-
-​     本周主要是根据老师的流程来学习了一下浏览起工作原理第一步之http的解析，并完成toy-broswer的第一步，有很多细节的地方需要自己进行完善补充，例如，http状态码可以自己抽时间多看看主要的，浏览器实际的工作流程可以多复习复习，跟上老师上课不步伐。
-
+      }else if(this.current===this.WAITING_HEADER_LINE_END){
+        if(char==='\n'){
+            this.current = this.WAITING_HEADER_NAME;
+        }
+      }else if(this.current===this.WAITING_HEADER_BLOCk_END){
+        if(char==='\n'){
+            this.current = this.WAITING_BODY;
+        }
+      }else if(this.current === this.WAITING_BODY){
+          this.bodyParser.receiveChar(char);
+      }
+    }
+}
