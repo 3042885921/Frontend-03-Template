@@ -1,0 +1,79 @@
+{
+    "eslint.autoFixOnSave": true,
+"eslint.validate": [
+  "javascript",
+  "javascriptreact",
+  {
+    "language": "typescript",
+    "autoFix": true
+  },
+  {
+    "language": "typescriptreact",
+    "autoFix": true
+  }
+],
+"path-intellisense.mappings": {
+  "@": "${workspaceRoot}/src",
+  "@ajax": [
+    "${workspaceRoot}/src/utils/new-ajax"
+  ],
+  "@features/*": [
+    "${workspaceRoot}/src/features/*"
+  ]
+},
+"editor.formatOnSave": true,
+"[javascript]": {
+  "editor.formatOnSave": true
+},
+"[javascriptreact]": {
+  "editor.formatOnSave": true
+},
+"[typescript]": {
+  "editor.formatOnSave": true
+},
+"[typescriptreact]": {
+  "editor.formatOnSave": true
+},
+"[dotenv]": {
+  "editor.formatOnSave": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+},
+"todo-tree.highlights.customHighlight": {
+  "ALERT": {
+    "icon": "alert",
+    "type": "line",
+    "foreground": "#FF0000"
+  },
+  "FIXME": {
+    "icon": "alert",
+    "type": "line",
+    "foreground": "#ff4d4f"
+  },
+  "IMP": {
+    "icon": "stop",
+    "type": "line",
+    "foreground": "#2cfa00"
+  },
+  "Q": {
+    "icon": "unverified",
+    "type": "line",
+    "foreground": "#1890ff"
+  },
+  "TODO": {
+    "icon": "check",
+    "type": "line",
+    "foreground": "#FF8C00"
+  }
+},
+"todo-tree.regex.regex": "((//|#|<!--|;|/\\*)\\s@?($TAGS):|^\\s*- \\[ \\])",
+"editor.codeActionsOnSave": {
+  "source.fixAll.eslint": true
+},
+"todo-tree.general.tags": [
+  "TODO",
+  "FIXME",
+  "Q",
+  "IMP",
+  "ALERT"
+]
+}
